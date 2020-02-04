@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from google.cloud import bigquery
+import requests
 
 
 app = Flask(__name__)
@@ -22,6 +23,16 @@ def get_intersections():
     else:
         return "405: Restricted method"
 
+@app.route("/weather/<string:loc>", methods=['GET'])
+def get_weather(loc):
+    url = "http://api.openweathermap.org/data/2.5/weather?q=" + loc
+    url += "&APPID="
+    credentials = open("credentials.txt")
+    key = credentials.readline()
+    url += key
+    r = requests.get(url)
+    data = r.json()
+    return data
 
 @app.route("/intersections/<int:id>", methods=['GET'])
 def get_intersections_by_id(id):
