@@ -23,6 +23,22 @@ def get_intersections():
     else:
         return "405: Restricted method"
 
+@app.route("/census_centroids", methods=['GET'])
+def get_census_centroids():
+    table_id = table_id_base.format("census_centroids")
+    table = client.get_table(table_id)
+    QUERY = (
+        'SELECT * '
+        'FROM `{}` ').format(table_id)
+    query_job = client.query(QUERY)
+    rows = [dict(row) for row in query_job.result()]
+    if request.method == 'GET':
+        return jsonify(rows)
+    else:
+        return "405: Restricted method"
+
+
+
 @app.route("/weather/<string:loc>", methods=['GET'])
 def get_weather(loc):
     url = "http://api.openweathermap.org/data/2.5/weather?q=" + loc
